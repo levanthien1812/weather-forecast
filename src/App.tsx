@@ -1,7 +1,15 @@
 import React from "react";
+import MainPage from "./pages/mainPage/MainPage";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 function App() {
-  return <div className="text-xl text-red-500">Weather Forecast</div>;
+  const queryClient = new QueryClient();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <MainPage />
+    </QueryClientProvider>
+  );
 }
 
 export default App;
