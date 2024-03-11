@@ -1,14 +1,15 @@
-import React, { useMemo } from "react";
+import React, { useMemo, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../../../store/rootState";
 import { weatherActions } from "../../../store/weatherSlice";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
+import CurrentResult from "./CurrentResult";
+import { useQuery } from "@tanstack/react-query";
+import { fetchWeather } from "../../../services/weatherService";
+import ForecastResult from "./ForecastResult";
 
 const Result: React.FC = () => {
-  const { resultCurrent, isCurrent } = useSelector(
-    (state: RootState) => state.weather
-  );
+  const { resultCurrent, resultForecast, isCurrent, isLoading, location } =
+    useSelector((state: RootState) => state.weather);
 
   const dispatch = useDispatch();
 
@@ -17,9 +18,31 @@ const Result: React.FC = () => {
     []
   );
 
+  const { data, error, refetch } = useQuery({
+    queryKey: ["forecast", { location: location }],
+    queryFn: ({ signal }) =>
+      fetchWeather({
+        signal,
+        location: location,
+        isCurrent: !isCurrent,
+      }),
+    enabled: false,
+  });
+
+  const handleForecastClick = () => {
+    dispatch(weatherActions.setIsCurrent(false));
+    if (location.length > 0) {
+      refetch();
+    }
+  };
+
+  if (data) {
+    dispatch(weatherActions.setResultForecast(data));
+  }
+
   return (
     <div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-4 mb-4">
         <button
           className={isCurrent ? activeButtonClass : ""}
           onClick={() => {
@@ -30,35 +53,23 @@ const Result: React.FC = () => {
         </button>
         <button
           className={!isCurrent ? activeButtonClass : ""}
-          onClick={() => {
-            dispatch(weatherActions.setIsCurrent(false));
-          }}
+          onClick={handleForecastClick}
         >
           Forecast
         </button>
       </div>
-      <p>
-        Condition: <span>{resultCurrent?.current.condition.text}</span>
-      </p>
-      <img src={resultCurrent?.current.condition.icon} alt="" />
+      {isLoading && <p>Loading ...</p>}
       <div>
-        <p>
-          Temperature: <span>{resultCurrent?.current.temp_c}</span> (C)
-        </p>
-        <button>
-          <FontAwesomeIcon icon={faRightLeft} />
-        </button>
+        <div>
+          <p className="mb-2">Location: {location}</p>{" "}
+        </div>
+        {resultCurrent && isCurrent && (
+          <CurrentResult current={resultCurrent.current} />
+        )}
+        {resultForecast && !isCurrent && (
+          <ForecastResult forecast={resultForecast.forecast} />
+        )}
       </div>
-
-      <p>
-        Cloud cover: <span>{resultCurrent?.current.cloud}</span> (%)
-      </p>
-      <p>
-        Humidity: <span>{resultCurrent?.current.humidity}</span> (%)
-      </p>
-      <p>
-        Wind speed: <span>{resultCurrent?.current.wind_kph}</span> (kph)
-      </p>
     </div>
   );
 };
