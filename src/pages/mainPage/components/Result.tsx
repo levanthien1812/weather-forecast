@@ -14,7 +14,6 @@ const Result: React.FC = () => {
     isCurrent,
     isLoadingCurrent,
     location,
-    forecastDays,
   } = useSelector((state: RootState) => state.weather);
 
   return (
@@ -22,15 +21,13 @@ const Result: React.FC = () => {
       {isLoadingCurrent && <p>Loading ...</p>}
       <div>
         <div>
-          <p className="mb-2">Location: {location}</p>{" "}
+          <p className="mb-2 dark:text-white">Location: {location}</p>{" "}
         </div>
         {resultCurrent && isCurrent && (
           <CurrentResult current={resultCurrent.current} />
         )}
         {resultForecast && !isCurrent && (
-          <ForecastResult
-            forecast={resultForecast.forecast}
-          />
+          <ForecastResult forecast={resultForecast.forecast} />
         )}
       </div>
     </div>
