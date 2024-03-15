@@ -17,7 +17,8 @@ interface ResultForecastItf {
 interface initialWeatherItf {
   location: string;
   isCurrent: boolean;
-  isLoading: boolean;
+  isLoadingCurrent: boolean;
+  isLoadingForecast: boolean;
   resultCurrent: ResultCurrentItf | null;
   resultForecast: ResultForecastItf | null;
   forecastDays: number;
@@ -26,7 +27,8 @@ interface initialWeatherItf {
 const initialWeatherState: initialWeatherItf = {
   location: "",
   isCurrent: true,
-  isLoading: false,
+  isLoadingCurrent: false,
+  isLoadingForecast: false,
   resultCurrent: null,
   resultForecast: null,
   forecastDays: 3
@@ -48,8 +50,11 @@ const weatherSlice = createSlice({
     setResultForecast(state, action) {
       state.resultForecast = action.payload;
     },
-    setIsLoading(state, action) {
-      state.isLoading = action.payload;
+    setIsLoadingCurrent(state, action) {
+      state.isLoadingCurrent = action.payload;
+    },
+    setIsLoadingForecast(state, action) {
+      state.isLoadingForecast = action.payload;
     },
     setForecastDays(state, action) {
       state.forecastDays = action.payload;

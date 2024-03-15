@@ -1,51 +1,27 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { ForecastResponseItf } from "../../../models/ForecastInf";
 import { useDispatch, useSelector } from "react-redux";
-import { weatherActions } from "../../../store/weatherSlice";
 import { RootState } from "../../../store/rootState";
-import { useQuery } from "@tanstack/react-query";
-import { fetchWeather } from "../../../services/weatherService";
+import { UseQueryResult } from "@tanstack/react-query";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRightLeft } from "@fortawesome/free-solid-svg-icons";
+import { weatherActions } from "../../../store/weatherSlice";
 
-const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
-  //   const dispatch = useDispatch();
-  const [forecastDays, setForecastDays] = useState<number>(3);
+const ForecastResult: React.FC<{
+  forecast: ForecastResponseItf;
+}> = (props) => {
+  const { forecastDays, isLoadingForecast } = useSelector((state: RootState) => state.weather);
+  const dispatch = useDispatch();
   const [temperatureMeasurement, setTemperatureMeasurement] = useState<
     "C" | "F"
   >("C");
   const [windSpeedMeasurement, setWindSpeedMeasurement] = useState<
     "kph" | "mph"
-  >("kph");
-  const { location, resultForecast } = useSelector(
-    (state: RootState) => state.weather
-  );
-  const dispatch = useDispatch();
-
-  const { data, error, refetch } = useQuery({
-    queryKey: ["forecast", { location: location }],
-    queryFn: ({ signal }) =>
-      fetchWeather({
-        signal,
-        location: location,
-        isCurrent: false,
-        days: forecastDays,
-      }),
-    enabled: false,
-    staleTime: 7000,
-  });
-
-  if (data) {
-    dispatch(weatherActions.setResultForecast(data));
-  }
-
+    >("kph");
+  
   const handleDaysClick = (e: ChangeEvent<HTMLSelectElement>) => {
-    setForecastDays(parseInt(e.target.value));
+    dispatch(weatherActions.setForecastDays(parseInt(e.target.value)));
   };
-
-  useEffect(() => {
-    refetch();
-  }, [forecastDays]);
 
   return (
     <div className="border border-blue-600 px-6 py-4 rounded-xl space-y-2">
@@ -56,13 +32,14 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
           id="days"
           className="border border-blue-500 rounded-md outline-none"
           onChange={handleDaysClick}
+          value={forecastDays}
         >
           <option value="3">3 days</option>
           <option value="5">5 days</option>
           <option value="7">7 days</option>
         </select>
       </div>
-      {props.forecast && (
+      {props.forecast && !isLoadingForecast && (
         <div className="flex gap-3 overflow-x-scroll">
           {props.forecast.forecastday.map((day) => (
             <div
@@ -79,10 +56,10 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
               <div>
                 <img src={day.day.condition.icon} alt="" />
               </div>
-              <div className="flex items-start gap-2">
+              <div className="flex items-start gap-2 justify-between">
                 <div>
                   <p className="text-sm">
-                    Minimum temperature:{" "}
+                    Minimum temperature: <br />
                     <span className="bg-blue-200 rounded-md px-2 text-lg">
                       {temperatureMeasurement === "C"
                         ? day.day.mintemp_c + " C"
@@ -90,7 +67,7 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
                     </span>
                   </p>
                   <p className="text-sm">
-                    Maximum temperature:{" "}
+                    Maximum temperature: <br />
                     <span className="bg-blue-200 rounded-md px-2 text-lg">
                       {temperatureMeasurement === "C"
                         ? day.day.maxtemp_c + " C"
@@ -98,7 +75,7 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
                     </span>
                   </p>
                   <p className="text-sm">
-                    Average temperature:{" "}
+                    Average temperature: <br />
                     <span className="bg-blue-200 rounded-md px-2 text-lg">
                       {temperatureMeasurement === "C"
                         ? day.day.avgtemp_c + " C"
@@ -123,7 +100,7 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
               </div>
               <div className="flex items-start gap-2">
                 <p className="text-sm">
-                  Maximum wind speed:{" "}
+                  Maximum wind speed: <br />
                   <span className="bg-blue-200 rounded-md px-2 text-lg">
                     {windSpeedMeasurement === "kph"
                       ? day.day.maxwind_kph + " kph"
@@ -145,7 +122,7 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
                 </button>
               </div>
               <p className="text-sm">
-                Average humidity:{" "}
+                Average humidity: <br />
                 <span className="bg-blue-200 rounded-md px-2 text-lg">
                   {day.day.avghumidity + " %"}
                 </span>
@@ -154,6 +131,7 @@ const ForecastResult: React.FC<{ forecast: ForecastResponseItf }> = (props) => {
           ))}
         </div>
       )}
+      {isLoadingForecast && <p>Loading...</p>}
     </div>
   );
 };

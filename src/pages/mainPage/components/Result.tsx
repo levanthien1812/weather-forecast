@@ -8,57 +8,18 @@ import { fetchWeather } from "../../../services/weatherService";
 import ForecastResult from "./ForecastResult";
 
 const Result: React.FC = () => {
-  const { resultCurrent, resultForecast, isCurrent, isLoading, location } =
-    useSelector((state: RootState) => state.weather);
-
-  const dispatch = useDispatch();
-
-  const activeButtonClass = useMemo(
-    () => "bg-blue-500 text-white px-4 rounded-lg",
-    []
-  );
-
-  const { data, error, refetch } = useQuery({
-    queryKey: ["forecast", { location: location }],
-    queryFn: ({ signal }) =>
-      fetchWeather({
-        signal,
-        location: location,
-        isCurrent: !isCurrent,
-      }),
-    enabled: false,
-  });
-
-  const handleForecastClick = () => {
-    dispatch(weatherActions.setIsCurrent(false));
-    if (location.length > 0) {
-      refetch();
-    }
-  };
-
-  if (data) {
-    dispatch(weatherActions.setResultForecast(data));
-  }
+  const {
+    resultCurrent,
+    resultForecast,
+    isCurrent,
+    isLoadingCurrent,
+    location,
+    forecastDays,
+  } = useSelector((state: RootState) => state.weather);
 
   return (
     <div>
-      <div className="flex items-center gap-4 mb-4">
-        <button
-          className={isCurrent ? activeButtonClass : ""}
-          onClick={() => {
-            dispatch(weatherActions.setIsCurrent(true));
-          }}
-        >
-          Current
-        </button>
-        <button
-          className={!isCurrent ? activeButtonClass : ""}
-          onClick={handleForecastClick}
-        >
-          Forecast
-        </button>
-      </div>
-      {isLoading && <p>Loading ...</p>}
+      {isLoadingCurrent && <p>Loading ...</p>}
       <div>
         <div>
           <p className="mb-2">Location: {location}</p>{" "}
@@ -67,7 +28,9 @@ const Result: React.FC = () => {
           <CurrentResult current={resultCurrent.current} />
         )}
         {resultForecast && !isCurrent && (
-          <ForecastResult forecast={resultForecast.forecast} />
+          <ForecastResult
+            forecast={resultForecast.forecast}
+          />
         )}
       </div>
     </div>
