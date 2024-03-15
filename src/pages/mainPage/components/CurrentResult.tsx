@@ -12,10 +12,10 @@ const CurrentResult: React.FC<{ current: CurrentResponseItf }> = (props) => {
   >("kph");
 
   return (
-    <div className="border border-blue-600 px-6 py-4 rounded-xl space-y-2">
-      <p>
+    <div className="border border-blue-600 px-6 py-4 rounded-xl space-y-2 dark:bg-gray-700">
+      <p className="dark:text-white">
         Condition:{" "}
-        <span className="bg-blue-200 rounded-md px-2">
+        <span className="bg-blue-200 dark:text-black rounded-md px-2">
           {props?.current.condition.text}
         </span>
       </p>
@@ -23,9 +23,9 @@ const CurrentResult: React.FC<{ current: CurrentResponseItf }> = (props) => {
         <img src={props?.current.condition.icon} alt="" />
       </div>
       <div className="flex items-center gap-2">
-        <p>
+        <p className="dark:text-white">
           Temperature:{" "}
-          <span className="bg-blue-200 rounded-md px-2">
+          <span className="bg-blue-200 dark:text-black rounded-md px-2">
             {temperatureMeasurement === "C"
               ? props?.current.temp_c + " C"
               : props?.current.temp_f + " F"}
@@ -46,22 +46,22 @@ const CurrentResult: React.FC<{ current: CurrentResponseItf }> = (props) => {
         </button>
       </div>
 
-      <p>
+      <p className="dark:text-white">
         Cloud cover:{" "}
-        <span className="bg-blue-200 rounded-md px-2">
+        <span className="bg-blue-200 dark:text-black rounded-md px-2">
           {props?.current.cloud + " %"}
         </span>
       </p>
-      <p>
+      <p className="dark:text-white">
         Humidity:{" "}
-        <span className="bg-blue-200 rounded-md px-2">
+        <span className="bg-blue-200 dark:text-black rounded-md px-2">
           {props?.current.humidity + " %"}
         </span>
       </p>
       <div className="flex items-center gap-2">
-        <p>
+        <p className="dark:text-white">
           Wind speed:{" "}
-          <span className="bg-blue-200 rounded-md px-2">
+          <span className="bg-blue-200 dark:text-black rounded-md px-2">
             {windSpeedMeasurement === "kph"
               ? props?.current.wind_kph + " kph"
               : props?.current.wind_mph + " mph"}

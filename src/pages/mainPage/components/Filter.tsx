@@ -74,7 +74,7 @@ const Filter: React.FC = () => {
     <form onSubmit={handleFindResult} className="mb-4">
       <div className=" flex items-center gap-4 mb-4">
         <div>
-          <label htmlFor="country" className="me-2">
+          <label htmlFor="country" className="me-2 dark:text-white">
             Country
           </label>
           <select
@@ -87,7 +87,7 @@ const Filter: React.FC = () => {
           </select>
         </div>
         <div>
-          <label htmlFor="province" className="me-2">
+          <label htmlFor="province" className="me-2 dark:text-white">
             Province
           </label>
           <select
@@ -120,7 +120,7 @@ const Filter: React.FC = () => {
 
       <div className="flex items-center gap-4 mb-4">
         <button
-          className={isCurrent ? activeButtonClass : ""}
+          className={"dark:text-white " + isCurrent ? activeButtonClass : ""}
           onClick={() => {
             dispatch(weatherActions.setIsCurrent(true));
           }}
@@ -128,7 +128,7 @@ const Filter: React.FC = () => {
           Current
         </button>
         <button
-          className={!isCurrent ? activeButtonClass : ""}
+          className={"dark:text-white " + !isCurrent ? activeButtonClass : ""}
           onClick={() => {
             dispatch(weatherActions.setIsCurrent(false));
           }}
