@@ -120,7 +120,9 @@ const Filter: React.FC = () => {
 
       <div className="flex items-center gap-4 mb-4">
         <button
-          className={"dark:text-white " + isCurrent ? activeButtonClass : ""}
+          className={
+            "dark:text-white " + (isCurrent === true ? activeButtonClass : "")
+          }
           onClick={() => {
             dispatch(weatherActions.setIsCurrent(true));
           }}
@@ -128,7 +130,9 @@ const Filter: React.FC = () => {
           Current
         </button>
         <button
-          className={"dark:text-white " + !isCurrent ? activeButtonClass : ""}
+          className={
+            "dark:text-white " + (isCurrent === false ? activeButtonClass : "")
+          }
           onClick={() => {
             dispatch(weatherActions.setIsCurrent(false));
           }}

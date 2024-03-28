@@ -2,7 +2,7 @@ export interface ForecastResponseItf {
   forecastday: ForecastDay[];
 }
 
-interface ForecastDay {
+export interface ForecastDay {
   date: string;
   date_epoch: number;
   day: {
